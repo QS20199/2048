@@ -99,7 +99,7 @@
 			-webkit-animation:appear 0.15s;
 			-moz-animation:appear 0.15s;
 			-o-animation:appear 0.15s;
-			/*-ms-animation:appear 0.15s;*/
+			-ms-animation:appear 0.15s;
 			animation:appear 0.15s;
 		}
 		@-webkit-keyframes appear {
@@ -115,11 +115,13 @@
 			100% {-o-transform: scale(1) ;}
 		}
 		@-ms-keyframes appear {
-			0% {-ms-transform: scale(0) ;}
+			/*IE下如果设置为0，会闪烁一下*/
+			0% {-ms-transform: scale(0.01) ;}
 			100% {-ms-transform: scale(1) ;}
 		}
 		@keyframes appear {
-			0% {transform: scale(0) ;}
+			/*IE下如果设置为0，会闪烁一下*/
+			0% {transform: scale(0.01) ;}
 			100% {transform: scale(1) ;}
 		}
 
@@ -224,7 +226,7 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		$(function () {
+		// $(function () {
 
 			
 			//等待数字的图片加载完毕
@@ -605,13 +607,12 @@
 				var newCardIndexX = newCardIndex%4;
 				var newCardIndexY = Math.floor(newCardIndex/4);
 				if (Math.random()<0.8) {
-					$card_container.append('<div class="card position-'+newCardIndexX+'-'+newCardIndexY+'"><div class="appear cardInside num2 "></div></div>');
+					$card_container.append('<div class="card position-'+newCardIndexX+'-'+newCardIndexY+'"><div class="appear cardInside num2"></div></div>');
 					num[newCardIndex%4][Math.floor(newCardIndex/4)]=2;
 				}else{
-					$card_container.append('<div class="card position-'+newCardIndexX+'-'+newCardIndexY+'"><div class="appear cardInside num4 "></div></div>');
+					$card_container.append('<div class="card position-'+newCardIndexX+'-'+newCardIndexY+'"><div class="appear cardInside num4"></div></div>');
 					num[newCardIndex%4][Math.floor(newCardIndex/4)]=4;
 				}
-				
 				emptyGridIndex = null;
 			}
 
@@ -922,7 +923,7 @@
 			$("#click").bind('touchend', function(event) {
 				restart();
 			});
-		})
+		// })
 	</script>
 </body>
 </html>
