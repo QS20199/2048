@@ -4,12 +4,9 @@
 	<meta charset="UTF-8">
 	<title>2048</title>
 	<meta name="viewport" content="user-scalable=no">
-	<script type="text/javascript" src="http://cdnjscn.b0.upaiyun.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<!--<script type="text/javascript" src="http://cdnjscn.b0.upaiyun.com/libs/jquery/2.1.1/jquery.min.js"></script>-->
+    <script src="../jquery-2.1.1.js"></script>
 	<style type="text/css">
-		div.loading {
-			text-align: center;
-			font-size: 30px;
-		}
 		#click {
 			display: block;
 			width: 180px;
@@ -163,18 +160,6 @@
 			100% {transform: scale(1) ;}
 		}
 
-		.num2 {background-color: #eee4da;background-image: url(https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/2.gif);background-size:contain;}
-		.num4 {background-color: #ede0c8;background-image: url(https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/4.gif);background-size:contain;}
-		.num8 {background-color: #f2b179;color:#f9f6f2;background-image: url(https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/8.gif);background-size:contain;}
-		.num16 {background-color: #f59563;color:#f9f6f2;background-image: url(https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/16.gif);background-size:contain;}
-		.num32 {background-color: #f67c5f;color:#f9f6f2;background-image: url(https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/32.gif);background-size:contain;}
-		.num64 {background-color: #f65e3b;color:#f9f6f2;background-image: url(https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/64.gif);background-size:contain;}
-		.num128 {background-color: #edcf72;color:#f9f6f2;background-image: url(https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/128.gif);background-size:contain;}
-		.num256 {background-color: #edcc61;color:#f9f6f2;background-image: url(https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/256.gif);background-size:contain;}
-		.num512 {background-color: #edc850;color:#f9f6f2;background-image: url(https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/512.gif);background-size:contain;}
-		.num1024 {background-color: #edc53f;color:#f9f6f2;background-image: url(https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/1024.gif);background-size:contain;}
-		.num2048 {background-color: #edc22e;color:#f9f6f2;background-image: url(https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/2048`.gif);background-size:contain;}
-
 		.hid {
 			display: none;
 		}
@@ -182,31 +167,14 @@
 		.card_container {
 			position: absolute;
 		}
-
-
-		div.container {
-			visibility:hidden;
-		}
 	</style>
 	<div id='wx_pic' style='margin:0 auto; display:none;'>
 		<img src='https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/2048.jpg'/>
 	</div>
 </head>
 <body>
-
-	<!-- 加载图片后才显示游戏 -->
-	<img id="img1" class="hid num2" src="https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/2.gif">
-	<img id="img2" class="hid num4" src="https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/4.gif">
-	<img id="img3" class="hid num8" src="https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/8.gif">
-	<img id="img4" class="hid num16" src="https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/16.gif">
-	<img id="img5" class="hid num32" src="https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/32.gif">
-	<img id="img6" class="hid num64" src="https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/64.gif">
-	<img id="img7" class="hid num128" src="https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/128.gif">
-	<img id="img8" class="hid num256" src="https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/256.gif">
-	<img id="img9" class="hid num512" src="https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/512.gif">
-	<img id="img10" class="hid num1024" src="https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/1024.gif">
-	<img id="img11" class="hid num2048" src="https://raw.githubusercontent.com/QS20199/2048/gh-pages/image/2048.gif">
-	<div class="loading">加载中...</div>
+<!--<img id="test" src="" alt="" style='border:1px solid black' />-->
+<canvas id="canvas" width="300" height="300" class="hid" style="border:1px solid black"></canvas>
 	<div class="container">
 		<p id="click">重新开始</p>
 		<div class="play_area">
@@ -225,28 +193,251 @@
 			<div class="card_container"></div>
 		</div>
 	</div>
+
 	<script type="text/javascript">
 		// $(function () {
 
-			
-			//等待数字的图片加载完毕
-			var imgOK = 0;
-			var timer = setInterval(function() {
-				$("img").each(function() {
-					if(this.complete==true && $(this).isCounted!=true){
-						imgOK++;
-						$(this).isCounted=true;
-					}
-				});
-				if (imgOK>=12) {
-					clearInterval(timer)
-					$(".loading").hide(0,function () {
-						$(".container").css('visibility', 'visible');
-					});
-				}
-			}, 50);
+        //浏览器检测
+        {
+            var client = function(){
+
+                //rendering engines
+                var engine = {
+                    ie: 0,
+                    gecko: 0,
+                    webkit: 0,
+                    khtml: 0,
+                    opera: 0,
+
+                    //complete version
+                    ver: null
+                };
+
+                //browsers
+                var browser = {
+
+                    //browsers
+                    ie: 0,
+                    firefox: 0,
+                    safari: 0,
+                    konq: 0,
+                    opera: 0,
+                    chrome: 0,
+
+                    //specific version
+                    ver: null
+                };
 
 
+                //platform/device/OS
+                var system = {
+                    win: false,
+                    mac: false,
+                    x11: false,
+
+                    //mobile devices
+                    iphone: false,
+                    ipod: false,
+                    ipad: false,
+                    ios: false,
+                    android: false,
+                    nokiaN: false,
+                    winMobile: false,
+
+                    //game systems
+                    wii: false,
+                    ps: false
+                };
+
+                //detect rendering engines/browsers
+                var ua = navigator.userAgent;
+                if (window.opera){
+                    engine.ver = browser.ver = window.opera.version();
+                    engine.opera = browser.opera = parseFloat(engine.ver);
+                } else if (/AppleWebKit\/(\S+)/.test(ua)){
+                    engine.ver = RegExp["$1"];
+                    engine.webkit = parseFloat(engine.ver);
+
+                    //figure out if it's Chrome or Safari
+                    if (/Chrome\/(\S+)/.test(ua)){
+                        browser.ver = RegExp["$1"];
+                        browser.chrome = parseFloat(browser.ver);
+                    } else if (/Version\/(\S+)/.test(ua)){
+                        browser.ver = RegExp["$1"];
+                        browser.safari = parseFloat(browser.ver);
+                    } else {
+                        //approximate version
+                        var safariVersion = 1;
+                        if (engine.webkit < 100){
+                            safariVersion = 1;
+                        } else if (engine.webkit < 312){
+                            safariVersion = 1.2;
+                        } else if (engine.webkit < 412){
+                            safariVersion = 1.3;
+                        } else {
+                            safariVersion = 2;
+                        }
+
+                        browser.safari = browser.ver = safariVersion;
+                    }
+                } else if (/KHTML\/(\S+)/.test(ua) || /Konqueror\/([^;]+)/.test(ua)){
+                    engine.ver = browser.ver = RegExp["$1"];
+                    engine.khtml = browser.konq = parseFloat(engine.ver);
+                } else if (/rv:([^\)]+)\) Gecko\/\d{8}/.test(ua)){
+                    engine.ver = RegExp["$1"];
+                    engine.gecko = parseFloat(engine.ver);
+
+                    //determine if it's Firefox
+                    if (/Firefox\/(\S+)/.test(ua)){
+                        browser.ver = RegExp["$1"];
+                        browser.firefox = parseFloat(browser.ver);
+                    }
+                } else if (/MSIE ([^;]+)/.test(ua)){
+                    engine.ver = browser.ver = RegExp["$1"];
+                    engine.ie = browser.ie = parseFloat(engine.ver);
+                }
+
+                //detect browsers
+                browser.ie = engine.ie;
+                browser.opera = engine.opera;
+
+
+                //detect platform
+                var p = navigator.platform;
+                system.win = p.indexOf("Win") == 0;
+                system.mac = p.indexOf("Mac") == 0;
+                system.x11 = (p == "X11") || (p.indexOf("Linux") == 0);
+
+                //detect windows operating systems
+                if (system.win){
+                    if (/Win(?:dows )?([^do]{2})\s?(\d+\.\d+)?/.test(ua)){
+                        if (RegExp["$1"] == "NT"){
+                            switch(RegExp["$2"]){
+                                case "5.0":
+                                    system.win = "2000";
+                                    break;
+                                case "5.1":
+                                    system.win = "XP";
+                                    break;
+                                case "6.0":
+                                    system.win = "Vista";
+                                    break;
+                                case "6.1":
+                                    system.win = "7";
+                                    break;
+                                default:
+                                    system.win = "NT";
+                                    break;
+                            }
+                        } else if (RegExp["$1"] == "9x"){
+                            system.win = "ME";
+                        } else {
+                            system.win = RegExp["$1"];
+                        }
+                    }
+                }
+
+                //mobile devices
+                system.iphone = ua.indexOf("iPhone") > -1;
+                system.ipod = ua.indexOf("iPod") > -1;
+                system.ipad = ua.indexOf("iPad") > -1;
+                system.nokiaN = ua.indexOf("NokiaN") > -1;
+
+                //windows mobile
+                if (system.win == "CE"){
+                    system.winMobile = system.win;
+                } else if (system.win == "Ph"){
+                    if(/Windows Phone OS (\d+.\d+)/.test(ua)){;
+                        system.win = "Phone";
+                        system.winMobile = parseFloat(RegExp["$1"]);
+                    }
+                }
+
+
+                //determine iOS version
+                if (system.mac && ua.indexOf("Mobile") > -1){
+                    if (/CPU (?:iPhone )?OS (\d+_\d+)/.test(ua)){
+                        system.ios = parseFloat(RegExp.$1.replace("_", "."));
+                    } else {
+                        system.ios = 2;  //can't really detect - so guess
+                    }
+                }
+
+                //determine Android version
+                if (/Android (\d+\.\d+)/.test(ua)){
+                    system.android = parseFloat(RegExp.$1);
+                }
+
+                //gaming systems
+                system.wii = ua.indexOf("Wii") > -1;
+                system.ps = /playstation/i.test(ua);
+
+                //return it
+                return {
+                    engine:     engine,
+                    browser:    browser,
+                    system:     system
+                };
+
+            }();
+
+        }
+            //利用canvas实时创建数字卡片
+
+        (function(){
+            var numbers=["2","4","8","16","32","64","128","256","512","1024","2048"];
+            var bgc=["#eee4da","#ede0c8","#f2b179","#f59563","#f67c5f","#f65e3b","#edcf72","#edcc61","#edc850","#edc53f","#edc22e"];
+            var numberLength=[];
+            var numberHeight=[];
+            var canvas=document.getElementById("canvas");
+            var context=canvas.getContext("2d");
+            var style = document.createElement("style");
+            var imageUrl;
+            var imageData;
+            var count;
+            var isStart;
+            var startY;
+            style.appendChild(document.createTextNode(""));
+            context.font="bold 180px Arial";
+            context.fillStyle="#776e65";
+            for(var i= 0,length=numbers.length;i<length;i++){
+                if(i==2){
+                    context.fillStyle="#f9f6f2";
+                }
+                if(i==6){
+                    context.font="bold 140px Arial"
+                }
+                if(i==9){
+                    context.font="bold 100px Arial"
+                }
+                //第一步获取数字宽度，从左到右扫描每一列，如果全为白色，则计数+1
+                context.textBaseline="top";
+                context.fillText(numbers[i],0,0);
+                imageData = context.getImageData(0,0,300,300);
+                for(var x=298;x>=0;x--){
+                    for(var y=0;y<300;y++){
+                        if(imageData.data[(y*300+x)*4+3]!=0){
+                            numberLength.push(x);
+                            x=0;
+                            break;
+                        }
+                    }
+                }
+                context.clearRect(0,0,300,300);
+                context.textBaseline="middle";
+                if(client.engine.gecko!=0){
+                    context.translate(0,12);
+                }
+                context.fillText(numbers[i],150 -0.5*numberLength[i],150);
+                if(client.engine.gecko!=0){
+                    context.translate(0,-12);
+                }
+                imageUrl=canvas.toDataURL("image/png");
+                style.innerHTML+='.num'+numbers[i]+' {background-color: '+bgc[i]+';background-image: url('+imageUrl+');background-size:contain;}';
+                context.clearRect(0,0,300,300);
+            }
+            document.head.appendChild(style);
+        })();
 
 			//非手机竖屏时设置宽度
 			if(window.screen.availWidth>=window.screen.availHeight){
@@ -272,19 +463,19 @@
 				ocssRules = document.styleSheets[1].cssRules||document.styleSheets[1].rules;
 			}
 			//loading
-			ocssRules[0].style.fontSize=cardSize*0.217+"px";
+//			ocssRules[0].style.fontSize=cardSize*0.217+"px";
 			//click bottom
-			ocssRules[1].style.width=cardSize*1.38+"px";
-			ocssRules[1].style.margin=cardSize*0.36+"px auto";
-			ocssRules[1].style.fontSize=cardSize*0.217+"px";
-			ocssRules[1].style.lineHeight=cardSize*0.72+"px";
-			ocssRules[1].style.borderRadius=cardSize*0.072+"px";
+			ocssRules[0].style.width=cardSize*1.38+"px";
+			ocssRules[0].style.margin=cardSize*0.36+"px auto";
+			ocssRules[0].style.fontSize=cardSize*0.217+"px";
+			ocssRules[0].style.lineHeight=cardSize*0.72+"px";
+			ocssRules[0].style.borderRadius=cardSize*0.072+"px";
 			//card
+			ocssRules[8].style.width=cardSize+"px";
+			ocssRules[8].style.height=cardSize+"px";
+			//cardInside
 			ocssRules[9].style.width=cardSize+"px";
 			ocssRules[9].style.height=cardSize+"px";
-			//cardInside
-			ocssRules[10].style.width=cardSize+"px";
-			ocssRules[10].style.height=cardSize+"px";
 			//.position-x-x类确定
 			var style = document.createElement("style");
 			style.appendChild(document.createTextNode(""));
@@ -296,8 +487,6 @@
 					style.innerHTML+=".position-"+x+"-"+y+"{-webkit-transform:translate("+sizeX+"px,"+sizeY+"px);-moz-transform:translate("+sizeX+"px,"+sizeY+"px);-o-transform:translate("+sizeX+"px,"+sizeY+"px);-ms-transform:translate("+sizeX+"px,"+sizeY+"px);transform:translate("+sizeX+"px,"+sizeY+"px);}\n";
 				}
 			}
-
-
 
 			// 路径对象，表示卡片移动前后的位置，如(true,3,2,1)表示将1和2的卡片移动并合并到3，若iSrc2为-1，则表示只移动一个卡片
 			function Path (bMerge, iDst, iSrc1, iSrc2) {
@@ -692,7 +881,7 @@
 							}
 						}
 					}
-					
+
 					if(gameOver==true){
 						alert("GameOver");
 						restart();

@@ -4,6 +4,8 @@
 
 以CSS3制作动画效果，性能良好
 
+数字图片由canvas动态生成
+
 ## 浏览器支持
 Chrome/Firefox/Opera/IE10~11支持良好
 
